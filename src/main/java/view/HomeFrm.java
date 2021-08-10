@@ -6,6 +6,7 @@
 package view;
 
 import model.User;
+import view.billmanagement.BillManagementFrm;
 
 /**
  *
@@ -32,6 +33,7 @@ public class HomeFrm extends javax.swing.JFrame {
 
         btnClientManagement = new javax.swing.JButton();
         btnProductManagement = new javax.swing.JButton();
+        btnBillManagement = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -49,6 +51,13 @@ public class HomeFrm extends javax.swing.JFrame {
             }
         });
 
+        btnBillManagement.setText("Quản lý hóa đơn");
+        btnBillManagement.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBillManagementActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -57,7 +66,8 @@ public class HomeFrm extends javax.swing.JFrame {
                 .addGap(118, 118, 118)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnClientManagement, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
-                    .addComponent(btnProductManagement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnProductManagement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnBillManagement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(121, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -67,7 +77,9 @@ public class HomeFrm extends javax.swing.JFrame {
                 .addComponent(btnClientManagement)
                 .addGap(30, 30, 30)
                 .addComponent(btnProductManagement)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addComponent(btnBillManagement)
+                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         pack();
@@ -86,12 +98,19 @@ public class HomeFrm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnProductManagementActionPerformed
 
+    private void btnBillManagementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBillManagementActionPerformed
+        BillManagementFrm billManagementFrm = new BillManagementFrm(user);
+        billManagementFrm.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnBillManagementActionPerformed
+
     /**
      * @param args the command line arguments
      */
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBillManagement;
     private javax.swing.JButton btnClientManagement;
     private javax.swing.JButton btnProductManagement;
     // End of variables declaration//GEN-END:variables

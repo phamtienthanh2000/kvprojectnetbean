@@ -156,4 +156,5 @@ public boolean deleteProduct(int idProduct) {
 	
 	
 }
+    
 }

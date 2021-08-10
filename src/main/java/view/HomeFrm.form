@@ -28,6 +28,7 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="btnClientManagement" pref="288" max="32767" attributes="0"/>
                   <Component id="btnProductManagement" max="32767" attributes="0"/>
+                  <Component id="btnBillManagement" max="32767" attributes="0"/>
               </Group>
               <EmptySpace pref="121" max="32767" attributes="0"/>
           </Group>
@@ -40,7 +41,9 @@
               <Component id="btnClientManagement" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               <Component id="btnProductManagement" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="142" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+              <Component id="btnBillManagement" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="91" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -60,6 +63,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnProductManagementActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnBillManagement">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; h&#xf3;a &#x111;&#x1a1;n"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBillManagementActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

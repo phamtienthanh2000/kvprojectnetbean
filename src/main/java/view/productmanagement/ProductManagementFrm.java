@@ -458,7 +458,7 @@ public class ProductManagementFrm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void tblProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductMouseClicked
-        int column = tblProduct.getColumnModel().getColumnIndexAtX(evt.getX());
+         int column = tblProduct.getColumnModel().getColumnIndexAtX(evt.getX());
         int row = evt.getY() / tblProduct.getRowHeight();
         if (row < tblProduct.getRowCount() && row >= 0 && column < tblProduct.getColumnCount() && column >= 0) {
             for (Product c : this.allProducts) {

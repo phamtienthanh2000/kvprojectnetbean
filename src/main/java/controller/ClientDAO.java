@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import model.Client;
 import controller.DAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientDAO extends DAO{
 	public ClientDAO() {
@@ -125,6 +127,26 @@ public class ClientDAO extends DAO{
 		
 		
 	}
+
+
+        public boolean checkClientExistByPhoneNumber(String phoneNumber){
+            boolean result = false;
+            try {
+                PreparedStatement ps = connection.prepareStatement("Select * from tblClient Where phoneNumber = ?");
+                ps.setString(1, phoneNumber);
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()){
+                return true;
+                }
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(ClientDAO.class.getName()).log(Level.SEVERE, null, ex);
+                return result;
+            }
+        
+        
+        return result;
+        }
 }
 
 

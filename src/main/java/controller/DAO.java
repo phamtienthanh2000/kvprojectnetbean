@@ -12,7 +12,7 @@ public class DAO {
 		if (connection == null) {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/agencydb?useSSL=false", "root",
+				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/agencydb?allowPublicKeyRetrieval=true&useSSL=false", "root",
 						"123456789");
 				
 				
