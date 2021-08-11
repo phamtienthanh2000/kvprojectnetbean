@@ -57,4 +57,20 @@ public class OrderLineDAO extends DAO {
     
     }
 
+    public boolean updateOrderLine(OrderLine orderLine) {
+        try {
+            String updateOrderLine = "Update tblOrderLine set amount = ?,sellPrice = ?,idProduct = ? Where id = ?";
+            PreparedStatement ps = connection.prepareStatement(updateOrderLine);
+            ps.setInt(1, orderLine.getAmount());
+            ps.setInt(2, orderLine.getSellPrice());
+            ps.setInt(3, orderLine.getProduct().getId());
+            ps.setInt(4, orderLine.getId());
+            int rowCount = ps.executeUpdate();
+            return rowCount > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
 }

@@ -388,6 +388,7 @@ public class AddClientFrm extends javax.swing.JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println(chosenClient);
         bill.setClient(chosenClient);
         ConfirmCreateBillFrm confirmCreateBillFrm = new ConfirmCreateBillFrm(bill);
         confirmCreateBillFrm.setVisible(true);

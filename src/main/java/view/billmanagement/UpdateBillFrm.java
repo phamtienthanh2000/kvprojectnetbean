@@ -10,8 +10,9 @@ import controller.ProductDAO;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import model.Bill;
 import model.Client;
@@ -43,6 +44,87 @@ public class UpdateBillFrm extends javax.swing.JFrame {
 
         setValue();
         prepareProductComboBox();
+        // txtShipmentFee.getDocument().addDocumentListener(this);
+        txtShipmentFee.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+
+            }
+
+            public void handleChange() {
+                if (!Pattern.matches("^\\d{1,}", txtShipmentFee.getText())) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập lại phí vận chuyển");
+                    return;
+                }
+
+                updateTotal();
+            }
+
+
+        });
+        txtDiscount.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+
+            public void handleChange() {
+                if (!Pattern.matches("^\\d{1,}", txtShipmentFee.getText())) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập lại phí vận chuyển");
+                    return;
+                }
+
+                updateTotal();
+            }
+
+        });
+        txtDeposit.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+
+            public void handleChange() {
+                if (!Pattern.matches("^\\d{1,}", txtShipmentFee.getText())) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập lại phí vận chuyển");
+                    return;
+                }
+
+                updateTotal();
+            }
+        });
+
 
     }
 
@@ -100,6 +182,10 @@ public class UpdateBillFrm extends javax.swing.JFrame {
         btnSave = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         lblClientID = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        lblOweAmount = new javax.swing.JLabel();
 
         dialogEditClient.setMinimumSize(new java.awt.Dimension(500, 400));
         dialogEditClient.setModal(true);
@@ -327,6 +413,14 @@ public class UpdateBillFrm extends javax.swing.JFrame {
 
         lblClientID.setText("jLabel14");
 
+        jLabel19.setText("Tổng tiền  ");
+
+        lblTotal.setText("jLabel20");
+
+        jLabel20.setText("Còn lại");
+
+        lblOweAmount.setText("jLabel21");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -373,32 +467,41 @@ public class UpdateBillFrm extends javax.swing.JFrame {
                                 .addComponent(btnEditClient))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 708, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(173, 173, 173)
+                        .addComponent(btnEditOrderLine, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(77, 77, 77)
+                        .addComponent(btnDeleteOrderLine, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(173, 173, 173)
-                                .addComponent(btnEditOrderLine, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtShipmentFee, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnDeleteOrderLine, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41)
-                                .addComponent(jLabel9)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(txtShipmentFee, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtDeposit)
+                                .addGap(64, 64, 64)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel20)
+                            .addComponent(jLabel9))
+                        .addGap(33, 33, 33)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(32, 32, 32))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(42, 42, 42)))
+                                .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblOweAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(224, 224, 224)
-                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -438,11 +541,17 @@ public class UpdateBillFrm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(txtShipmentFee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9)
+                    .addComponent(txtDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19)
+                    .addComponent(lblTotal))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(txtDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                    .addComponent(jLabel20)
+                    .addComponent(lblOweAmount))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(btnSave)
                 .addGap(20, 20, 20))
         );
@@ -693,7 +802,9 @@ public class UpdateBillFrm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -706,7 +817,9 @@ public class UpdateBillFrm extends javax.swing.JFrame {
     private javax.swing.JLabel lblClientID;
     private javax.swing.JLabel lblClientName;
     private javax.swing.JLabel lblClientPhoneNumber;
+    private javax.swing.JLabel lblOweAmount;
     private javax.swing.JLabel lblProductName;
+    private javax.swing.JLabel lblTotal;
     private javax.swing.JTable tblOrderLine;
     private javax.swing.JTextField txtAmount;
     private javax.swing.JTextField txtDeposit;
@@ -729,9 +842,9 @@ public class UpdateBillFrm extends javax.swing.JFrame {
         txtShipmentFee.setText(bill.getShipmentFee() + "");
         txtDeposit.setText(bill.getDeposit() + "");
         txtDiscount.setText(bill.getDiscount() + "");
-
+        
         updateTable(bill.getOrderLines());
-
+        updateTotal();
     }
 
     private void updateTable(ArrayList<OrderLine> orderLines) {
@@ -758,7 +871,7 @@ public class UpdateBillFrm extends javax.swing.JFrame {
 
         DefaultTableModel model = new DefaultTableModel(data, new String[]{"No .", "Id sản phẩm", "Tên sản phẩm", "Số lượng", "Giá bán", "Thành tiền "});
         tblOrderLine.setModel(model);
-
+        updateTotal();
     }
 
     private int calculateTableSum(ArrayList<OrderLine> orderLines) {
@@ -779,6 +892,15 @@ public class UpdateBillFrm extends javax.swing.JFrame {
         DefaultComboBoxModel<String> defaultComboBoxModel = new DefaultComboBoxModel<>();
         defaultComboBoxModel.addAll(selections);
         this.cbxAddOrderLine.setModel(defaultComboBoxModel);
+    }
+
+    private void updateTotal() {
+        int tableTotal = this.calculateTableSum(chosenOrderLines);
+        int shipmentFee = Integer.parseInt(this.txtShipmentFee.getText());
+        int discount = Integer.parseInt(this.txtDiscount.getText());
+
+        lblTotal.setText(tableTotal+shipmentFee-discount+"");
+        lblOweAmount.setText(Integer.parseInt(lblTotal.getText()) - Integer.parseInt(txtDeposit.getText()) + "");
     }
 
 }

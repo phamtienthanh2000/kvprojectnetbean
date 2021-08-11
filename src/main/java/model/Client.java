@@ -41,5 +41,10 @@ public String getAddress() {
 public void setAddress(String address) {
 	this.address = address;
 }
- 
+
+    @Override
+    public String toString() {
+        return "Client id : " + this.getId() + " client name : " + this.getName() + " clietn address " + this.address + " client phone number " + this.getPhoneNumber();
+    }
+
 }

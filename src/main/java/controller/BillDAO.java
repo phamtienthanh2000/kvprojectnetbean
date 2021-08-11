@@ -4,48 +4,59 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
-
 import model.Bill;
 import model.Client;
-import controller.DAO;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Description;
 import model.OrderLine;
 import model.Product;
 import model.User;
 
 public class BillDAO extends DAO {
-
+    private ProductDAO productDAO;
     private Bill bill;
+    private ClientDAO clientDAO;
+    private OrderLineDAO orderLineDAO;
+
+    public BillDAO() {
+        productDAO = new ProductDAO();
+        clientDAO = new ClientDAO();
+        orderLineDAO = new OrderLineDAO();
+    }
 
     public boolean createBill(Bill b) {
         this.bill = b;
-        PreparedStatement ps;
-        int rowCount;
+        boolean result = true;
         try {
-            // check client exist in db ?
+            connection.setAutoCommit(false);
+            PreparedStatement ps;
 
-            Client client = bill.getClient();
+            // tao khach hangf
+             Client client = bill.getClient();
             if (client.getId() == 0) {
+                System.out.println(client.getName());
+
                 ps = connection.prepareStatement("Insert into tblClient (`name`,address,phoneNumber)VALUES(?,?,?)", Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, client.getName());
                 ps.setString(2, client.getAddress());
                 ps.setString(3, client.getPhoneNumber());
-                rowCount = ps.executeUpdate();
-                if (rowCount > 0) {
+                // cap nhat khach hang xong
+                int rowCount = ps.executeUpdate();
+                System.out.println("row count client : " + rowCount);
+                if (rowCount < 0) {
+                    System.out.println("Them khach hang that bai");
+                } else {
                     ResultSet rs = ps.getGeneratedKeys();
                     if (rs.next()) {
                         client.setId(rs.getInt(1));
 
                     }
 
-                } else {
-                    return false;
-
                 }
+
             }
+            // insert bill de lay id truoc
 
             ps = connection.prepareStatement("Insert into tblBill(shipmentFee,deposit,discount,oweAmount,writeDate,idClient,idUser)VALUES(?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, bill.getShipmentFee());
@@ -55,54 +66,52 @@ public class BillDAO extends DAO {
             ps.setDate(5, java.sql.Date.valueOf(bill.getWriteDate()));
             ps.setInt(6, bill.getClient().getId());
             ps.setInt(7, bill.getUser().getId());
-            rowCount = ps.executeUpdate();
-            // neu tao hoa don thanh cong roi
+            int rowCount = ps.executeUpdate();
             if (rowCount > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) {
                     bill.setId(rs.getInt(1));
-                    String sql = "Insert Into tblOrderline(amount,sellPrice,idBill,idProduct) VALUES";
-                    int count = 0;
-                    for (OrderLine orderLine : bill.getOrderLines()) {
-                        if (count == bill.getOrderLines().size() - 1) {
-                            sql += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + orderLine.getProduct().getId() + ")";
-                            break;
-
-                        }
-                        sql += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + orderLine.getProduct().getId() + "),";
-
-                        count++;
-                    }
-
-                    ps = connection.prepareStatement(sql);
-                    rowCount = ps.executeUpdate();
-                    // cac orderLine da dc cap nhat
-                    if (rowCount > 0) {
-                        String SQL = "Update tblProduct Set amount = ? Where id = ?";
-                        for (OrderLine orderLine : bill.getOrderLines()) {
-                            int boughtAmount = orderLine.getAmount();
-                            ps = connection.prepareStatement(SQL);
-                            ps.setInt(1, orderLine.getProduct().getAmount() - boughtAmount);
-                            ps.setInt(2, orderLine.getProduct().getId());
-                            rowCount = ps.executeUpdate();
-                            return rowCount > 0;
-                        }
-
-                    } else {
-                        return false;
-                    }
                 }
 
             } else {
-                return false;
+                System.out.println("Them hoa don that bai");
+            }
+            // insert orderLines
+            ArrayList<OrderLine> orderLines = bill.getOrderLines();
+
+            String addOrderLineSQL = "Insert into tblOrderLine(amount,sellPrice,idBill,idProduct)VALUES";
+            for (OrderLine orderLine : orderLines) {
+
+                Product product = orderLine.getProduct();
+                addOrderLineSQL += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + product.getId() + "),";
+                // tru so luong hang da tra
+                product.setAmount(product.getAmount() - orderLine.getAmount());
+                if (!productDAO.updateProduct(product)) {
+                    System.out.println("chinh sua so luong that bai");
+
+                };
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            addOrderLineSQL = addOrderLineSQL.substring(0, addOrderLineSQL.length() - 1);
+            ps = connection.prepareStatement(addOrderLineSQL);
+            int addRowCount = ps.executeUpdate();
+            if (addRowCount < 0) {
+                System.out.println("TThem orderLine that bai !");
+            }
+            connection.commit();
+        } catch (SQLException ex) {
+            try {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                return false;
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+                return false;
+            }
         }
 
-        return false;
+        return result;
+
 
     }
 
@@ -258,120 +267,184 @@ public class BillDAO extends DAO {
 
     }
 
-    public boolean updateBill(Bill bill) {
+    public boolean updateBill(Bill b) {
         boolean result = true;
-
+        this.bill = b;
         try {
+
+            PreparedStatement ps;
+
             connection.setAutoCommit(false);
-            ClientDAO clientDAO = new ClientDAO();
             clientDAO.editClient(bill.getClient());
             String sqlAddOrderLine = "Insert into tblOrderLine(amount,sellPrice,idBill,idProduct)VALUES";
-            String updateOrderLine = "Update tblOrderLine set amount = ?,sellPrice = ?,idProduct = ? Where id = ?";
-
-            // xoa cac orderLine khong con
-            OrderLineDAO orderLineDAO = new OrderLineDAO();
-            // cac orderLine cu van con nhung chua update
-            ProductDAO productDAO = new ProductDAO();
 
             ArrayList<OrderLine> orderLines = orderLineDAO.getAllOrderLinesByBillId(bill.getId());
             for (int i = 0; i < orderLines.size(); i++) {
                 OrderLine orderLine = orderLines.get(i);
+                Product product = orderLine.getProduct();
                 boolean remove = true;
-                for (OrderLine order : bill.getOrderLines()) {
-                    if (orderLine.getId() == order.getId()) {
+                for (OrderLine newOrderLine : bill.getOrderLines()) {
+                    if (orderLine.getId() == newOrderLine.getId()) {
                         remove = false;
                         break;
                     }
 
                 }
                 if (remove == true) {
-                    orderLine.getProduct().setAmount(orderLine.getProduct().getAmount() + orderLine.getAmount());
-                    productDAO.updateProduct(orderLine.getProduct());
-                     orderLineDAO.deleteOrderLineById(orderLine.getId());
+
+                    product.setAmount(product.getAmount() + orderLine.getAmount());
+                    productDAO.updateProduct(product);
+                    orderLineDAO.deleteOrderLineById(orderLine.getId());
                     orderLines.remove(i);
                 }
 
             }
-
-            ArrayList<OrderLine> newOrderLines = new ArrayList<>();
-
+            boolean existNewOrderLine = false;
             for (OrderLine orderLine : bill.getOrderLines()) {
-
+                Product product = orderLine.getProduct();
                 if (orderLine.getId() == 0) {
-                    newOrderLines.add(orderLine);
-                    sqlAddOrderLine += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + orderLine.getProduct().getId() + "),";
-                    // can thiep so luong product
-                    orderLine.getProduct().setAmount(orderLine.getProduct().getAmount() - orderLine.getAmount());
-                    productDAO.updateProduct(orderLine.getProduct());
+                    existNewOrderLine = true;
+                    sqlAddOrderLine += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + product.getId() + "),";
+                    product.setAmount(product.getAmount() - orderLine.getAmount());
+                    productDAO.updateProduct(product);
+
                 } else {
-                    int chenhLechSoLuong = 0;
-
-                    for (OrderLine getNumberOrderLine : orderLines) {
-                        if (orderLine.getId() == getNumberOrderLine.getId()) {
-                            chenhLechSoLuong = orderLine.getAmount() - getNumberOrderLine.getAmount();
-                            // neu lay nhieu hnnhieu hon
-                            if (chenhLechSoLuong > 0) {
-                                getNumberOrderLine.getProduct().setAmount(getNumberOrderLine.getProduct().getAmount() - chenhLechSoLuong);
-
-                            } else if (chenhLechSoLuong < 0) {
-                                getNumberOrderLine.getProduct().setAmount(getNumberOrderLine.getProduct().getAmount() + chenhLechSoLuong);
+                    for (OrderLine oldOrderLine : orderLines) {
+                        int amountDiff = 0;
+                        if (oldOrderLine.getId() == orderLine.getId()) {
+                            amountDiff = orderLine.getAmount() - oldOrderLine.getAmount();
+                            // lay nhieu hon 
+                            if (amountDiff > 0) {
+                                product.setAmount(product.getAmount() - amountDiff);
+                                
+                            } else {
+                                product.setAmount(product.getAmount() - amountDiff);
 
                             }
-                            productDAO.updateProduct(getNumberOrderLine.getProduct());
-
+                            productDAO.updateProduct(product);
+                            orderLineDAO.updateOrderLine(orderLine);
+                            break;
                         }
 
                     }
 
-                    PreparedStatement ps = connection.prepareStatement(updateOrderLine);
-                    ps.setInt(1, orderLine.getAmount());
-                    ps.setInt(2, orderLine.getSellPrice());
-                    ps.setInt(3, orderLine.getProduct().getId());
-                    ps.setInt(4, orderLine.getId());
-                    ps.executeUpdate();
-                    //
 
                 }
-
+            }
+            if (existNewOrderLine) {
+                sqlAddOrderLine = sqlAddOrderLine.substring(0, sqlAddOrderLine.length() - 1);
+                ps = connection.prepareStatement(sqlAddOrderLine);
+                ps.executeUpdate();
             }
 
-            sqlAddOrderLine = sqlAddOrderLine.substring(0, sqlAddOrderLine.length() - 1);
-            PreparedStatement ps = connection.prepareStatement(sqlAddOrderLine);
+
+            ps = connection.prepareStatement("Update tblBill Set shipmentFee = ? ,deposit = ?, discount = ?,oweAmount = ? Where id = ?");
+            ps.setInt(1, bill.getShipmentFee());
+            ps.setInt(2, bill.getDeposit());
+            ps.setInt(3, bill.getDiscount());
+            ps.setInt(4, bill.getOweAmount());
+            ps.setInt(5, bill.getId());
             ps.executeUpdate();
 
-            PreparedStatement updateBillPs = connection.prepareStatement("Update tblBill Set shipmentFee = ? ,deposit = ?, discount = ?,oweAmount = ? Where id = ?");
-            updateBillPs.setInt(1, bill.getShipmentFee());
-            updateBillPs.setInt(2, bill.getDeposit());
-            updateBillPs.setInt(3, bill.getDiscount());
-            updateBillPs.setInt(4, bill.getOweAmount());
-            updateBillPs.setInt(5, bill.getId());
-
-            updateBillPs.executeUpdate();
-
-        } catch (Exception ex) {
-            try {
-                result = false;
-                connection.rollback();
-                return result;
-            } catch (SQLException ex1) {
-                return false;
-            }
-        }
-        try {
             connection.commit();
-            connection.setAutoCommit(true);
 
-            return true;
+
         } catch (Exception e) {
             try {
-                connection.setAutoCommit(true);
+                connection.rollback();
                 e.printStackTrace();
                 return false;
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 return false;
             }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                return false;
+            }
+
         }
 
+        return result;
+
+    }
+
+    public ArrayList<Bill> getBillsByProductId(int id) {
+        ArrayList<Bill> result = new ArrayList<Bill>();
+        try {
+            PreparedStatement ps = connection.prepareStatement("select o.amount,o.sellPrice,(o.amount*o.sellPrice) as `total`,b.id as idBill, b.writeDate,c.id as `idClient`,c.`name` as `clientName`, u.fullName as `userFullName`  from tblorderline as o Inner join tblBill as b  on o.idBill = b.id left join tblClient as c on b.idClient = c.id left join tbluser as u on b.idUser = u.id where o.idProduct = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            Bill bill = null;
+            OrderLine orderLine = null;
+            User user = null;
+            Client client = null;
+            while (rs.next()) {
+                bill = new Bill();
+                bill.setId(rs.getInt("idBill"));
+                bill.setWriteDate(rs.getDate("writeDate").toLocalDate());
+                orderLine = new OrderLine();
+                orderLine.setAmount(rs.getInt("amount"));
+                orderLine.setSellPrice(rs.getInt("sellPrice"));
+                orderLine.setTotal(rs.getInt("total"));
+                client = new Client();
+                client.setId(rs.getInt("idClient"));
+                client.setName(rs.getString("clientName"));
+                user = new User();
+                user.setFullName(rs.getString("userFullName"));
+                bill.getOrderLines().add(orderLine);
+                bill.setClient(client);
+                bill.setUser(user);
+                result.add(bill);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return result;
+
+    }
+
+    public ArrayList<Bill> getBillsByProductIdAndDateBetweenStartDateAndEndDate(int productID, LocalDate startDate, LocalDate endDate) {
+        ArrayList<Bill> result = new ArrayList<Bill>();
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement("select o.amount,o.sellPrice,(o.amount*o.sellPrice) as `total`,b.id as idBill, b.writeDate,c.id as `idClient`,c.`name` as `clientName`, u.fullName as `userFullName`  from tblorderline as o Inner join tblBill as b  on o.idBill = b.id left join tblClient as c on b.idClient = c.id left join tbluser as u on b.idUser = u.id where o.idProduct = ? and b.writeDate between ? AND ?");
+            ps.setInt(1, productID);
+            ps.setDate(2, java.sql.Date.valueOf(startDate));
+            ps.setDate(3, java.sql.Date.valueOf(endDate));
+            System.out.println(ps);
+            ResultSet rs = ps.executeQuery();
+            Bill bill = null;
+            OrderLine orderLine = null;
+            User user = null;
+            Client client = null;
+            while (rs.next()) {
+                bill = new Bill();
+                bill.setId(rs.getInt("idBill"));
+                bill.setWriteDate(rs.getDate("writeDate").toLocalDate());
+                orderLine = new OrderLine();
+                orderLine.setAmount(rs.getInt("amount"));
+                orderLine.setSellPrice(rs.getInt("sellPrice"));
+                orderLine.setTotal(rs.getInt("total"));
+                client = new Client();
+                client.setId(rs.getInt("idClient"));
+                client.setName(rs.getString("clientName"));
+                user = new User();
+                user.setFullName(rs.getString("userFullName"));
+                bill.getOrderLines().add(orderLine);
+                bill.setClient(client);
+                bill.setUser(user);
+                result.add(bill);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+        return result;
     }
 }

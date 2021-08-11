@@ -88,7 +88,10 @@ public class Bill implements Serializable {
 	public void setClient(Client client) {
 		this.client = client;
 	}
-	public  ArrayList<OrderLine> getOrderLines() {
+    public ArrayList<OrderLine> getOrderLines() {
+        if (this.orderLines == null) {
+            this.orderLines = new ArrayList<OrderLine>();
+        }
 		return orderLines;
 	}
 	public void setOrderLines( ArrayList<OrderLine> orderLines) {
