@@ -277,14 +277,17 @@ public class BillDAO extends DAO {
             connection.setAutoCommit(false);
             clientDAO.editClient(bill.getClient());
             String sqlAddOrderLine = "Insert into tblOrderLine(amount,sellPrice,idBill,idProduct)VALUES";
-
+            // cac orderLine cu trong bill
             ArrayList<OrderLine> orderLines = orderLineDAO.getAllOrderLinesByBillId(bill.getId());
+            // nguoi dung co the xoa di viet lai -> id = 0;
             for (int i = 0; i < orderLines.size(); i++) {
                 OrderLine orderLine = orderLines.get(i);
                 Product product = orderLine.getProduct();
                 boolean remove = true;
+                // cac orderLine moi - > id = 0
                 for (OrderLine newOrderLine : bill.getOrderLines()) {
-                    if (orderLine.getId() == newOrderLine.getId()) {
+                    // du cu hay moi thi deu co chung productID
+                    if (orderLine.getProduct().getId() == newOrderLine.getProduct().getId()) {
                         remove = false;
                         break;
                     }
@@ -300,13 +303,28 @@ public class BillDAO extends DAO {
 
             }
             boolean existNewOrderLine = false;
+            // co the chua orderLine cu nhung duoc viet lai
             for (OrderLine orderLine : bill.getOrderLines()) {
                 Product product = orderLine.getProduct();
                 if (orderLine.getId() == 0) {
-                    existNewOrderLine = true;
-                    sqlAddOrderLine += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + product.getId() + "),";
-                    product.setAmount(product.getAmount() - orderLine.getAmount());
-                    productDAO.updateProduct(product);
+                    OrderLine checkExistOrderLine = orderLineDAO.findByIdProductAndIdBill(product.getId(), bill.getId());
+                    if (checkExistOrderLine != null) {
+                        // logic
+                        int amountDiff = orderLine.getAmount() - checkExistOrderLine.getAmount();
+                        product.setAmount(product.getAmount() - amountDiff);
+                        productDAO.updateProduct(product);
+                        checkExistOrderLine.setProduct(product);
+                        checkExistOrderLine.setAmount(orderLine.getAmount());
+                        checkExistOrderLine.setSellPrice(orderLine.getSellPrice());
+                        orderLineDAO.updateOrderLine(checkExistOrderLine);
+                    } else {
+                        existNewOrderLine = true;
+                        sqlAddOrderLine += "(" + orderLine.getAmount() + "," + orderLine.getSellPrice() + "," + bill.getId() + "," + product.getId() + "),";
+                        product.setAmount(product.getAmount() - orderLine.getAmount());
+                        productDAO.updateProduct(product);
+
+                    }
+
 
                 } else {
                     for (OrderLine oldOrderLine : orderLines) {

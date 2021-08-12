@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import model.Description;
 import model.Product;
@@ -517,12 +516,12 @@ public class ProductManagementFrm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Vui lòng cập nhật đơn vị tính");
             return;
         }
-        if (updateAmount == "") {
+        if (!Pattern.matches(regexNumber, updateAmount)) {
             JOptionPane.showMessageDialog(null, "Vui lòng cập nhật số lượng");
             return;
 
         }
-        if (updateStickerPrice == "") {
+        if (!Pattern.matches(regexNumber, updateStickerPrice)) {
             JOptionPane.showMessageDialog(null, "Vui lòng cập nhật giá niêm yết");
             return;
 

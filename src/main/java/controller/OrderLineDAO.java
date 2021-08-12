@@ -11,7 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Description;
 import model.OrderLine;
+import model.Product;
 
 /**
  *
@@ -24,16 +26,33 @@ public class OrderLineDAO extends DAO {
 
         try {
 
-            PreparedStatement ps = connection.prepareStatement("Select * from tblOrderLine Where idBill = ?");
+            PreparedStatement ps = connection.prepareStatement("select o.id as idOrderLine , o.amount as orderLineAmount, o.sellPrice , p.id as idProduct,p.productName,p.calculationUnit,p.amount as productAmount,p.stickerPrice,d.id as idDescription , d.origin,d.supplyCompany from tblOrderLine as o left join tblProduct as  p on o.idProduct = p.id  left join tblDescription as d on p.id = d.idProduct where o.idBill = ?");
             ps.setInt(1, idBill);
             ResultSet rs = ps.executeQuery();
             OrderLine orderLine = null;
+            Product product = null;
+            Description description = null;
             while (rs.next()) {
                 orderLine = new OrderLine();
-
-                orderLine.setId(rs.getInt("id"));
-                orderLine.setAmount(rs.getInt("amount"));
+                
+                orderLine.setId(rs.getInt("idOrderLine"));
+                orderLine.setAmount(rs.getInt("orderLineAmount"));
                 orderLine.setSellPrice(rs.getInt("sellPrice"));
+                product = new Product();
+                product.setId(rs.getInt("idProduct"));
+                product.setProductName(rs.getString("productName"));
+                product.setCalculationUnit(rs.getString("calculationUnit"));
+                product.setAmount(rs.getInt("productAmount"));
+                product.setStickerPrice(rs.getInt("stickerPrice"));
+
+                description = new Description();
+                description.setId(rs.getInt("idDescription"));
+                description.setOrigin(rs.getString("origin"));
+                description.setSupplyCompany(rs.getString("supplyCompany"));
+
+                product.setDescription(description);
+                orderLine.setProduct(product);
+
                 result.add(orderLine);
             }
         } catch (SQLException ex) {
@@ -71,6 +90,47 @@ public class OrderLineDAO extends DAO {
             ex.printStackTrace();
             return false;
         }
+    }
+
+    public OrderLine findByIdProductAndIdBill(int idProduct, int idBill) {
+        OrderLine result = null;
+        PreparedStatement ps;
+        try {
+            ps = connection.prepareStatement("select o.id as idOrderLine, o.amount as orderLineAmount,o.sellPrice ,p.id as idProduct,p.productName,p.calculationUnit,p.amount as productAmount, p.stickerPrice , d.id as idDescription, d.origin,d.supplyCompany from tblOrderLine as o left join tblProduct as p on o.idProduct = p.id left join tblDescription as d on  p.id = d.idProduct where o.idBill = ? And o.idProduct = ?");
+            ps.setInt(1, idBill);
+            ps.setInt(2, idProduct);
+            ResultSet rs = ps.executeQuery();
+            OrderLine orderLine = null;
+            Product product = null;
+            Description description = null;
+            while (rs.next()) {
+                orderLine = new OrderLine();
+
+                orderLine.setId(rs.getInt("idOrderLine"));
+                orderLine.setAmount(rs.getInt("orderLineAmount"));
+                orderLine.setSellPrice(rs.getInt("sellPrice"));
+                product = new Product();
+                product.setId(rs.getInt("idProduct"));
+                product.setProductName(rs.getString("productName"));
+                product.setCalculationUnit(rs.getString("calculationUnit"));
+                product.setAmount(rs.getInt("productAmount"));
+                product.setStickerPrice(rs.getInt("stickerPrice"));
+
+                description = new Description();
+                description.setId(rs.getInt("idDescription"));
+                description.setOrigin(rs.getString("origin"));
+                description.setSupplyCompany(rs.getString("supplyCompany"));
+
+                product.setDescription(description);
+                orderLine.setProduct(product);
+
+                result = orderLine;
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(OrderLineDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 
 }
