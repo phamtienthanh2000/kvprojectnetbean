@@ -6,13 +6,14 @@
 package view.billmanagement;
 
 import controller.BillDAO;
-import controller.ProductDAO;
+import java.awt.Font;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Bill;
 import model.User;
+import view.HomeFrm;
 
 /**
  *
@@ -31,6 +32,8 @@ public class BillManagementFrm extends javax.swing.JFrame {
         this.user = u;
         
         initComponents();
+        lblTitle.setFont(new Font("Serif", Font.PLAIN, 20));
+        setLocationRelativeTo(null);
         billDAO = new BillDAO();
         allBills = billDAO.getAllBillsGeneralInformation();
         updateTable(allBills);
@@ -46,8 +49,8 @@ public class BillManagementFrm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        createBillFrm = new javax.swing.JDialog();
         searchClientFrm = new javax.swing.JDialog();
+        createBillFrm = new javax.swing.JDialog();
         btnWriteBill = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -55,17 +58,8 @@ public class BillManagementFrm extends javax.swing.JFrame {
         btnEditBill = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblBill = new javax.swing.JTable();
-
-        javax.swing.GroupLayout createBillFrmLayout = new javax.swing.GroupLayout(createBillFrm.getContentPane());
-        createBillFrm.getContentPane().setLayout(createBillFrmLayout);
-        createBillFrmLayout.setHorizontalGroup(
-            createBillFrmLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        createBillFrmLayout.setVerticalGroup(
-            createBillFrmLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        btnBack = new javax.swing.JButton();
+        lblTitle = new javax.swing.JLabel();
 
         javax.swing.GroupLayout searchClientFrmLayout = new javax.swing.GroupLayout(searchClientFrm.getContentPane());
         searchClientFrm.getContentPane().setLayout(searchClientFrmLayout);
@@ -75,6 +69,17 @@ public class BillManagementFrm extends javax.swing.JFrame {
         );
         searchClientFrmLayout.setVerticalGroup(
             searchClientFrmLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout createBillFrmLayout = new javax.swing.GroupLayout(createBillFrm.getContentPane());
+        createBillFrm.getContentPane().setLayout(createBillFrmLayout);
+        createBillFrmLayout.setHorizontalGroup(
+            createBillFrmLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        createBillFrmLayout.setVerticalGroup(
+            createBillFrmLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 300, Short.MAX_VALUE)
         );
 
@@ -94,7 +99,7 @@ public class BillManagementFrm extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Tìm hóa đơn ");
+        jLabel1.setText("Nhập Tên khách hàng");
 
         btnEditBill.setText("Sửa");
         btnEditBill.addActionListener(new java.awt.event.ActionListener() {
@@ -126,44 +131,60 @@ public class BillManagementFrm extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tblBill);
 
+        btnBack.setText("Quay lại");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
+        lblTitle.setText("Quản Lý Hóa Đơn");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(29, 29, 29)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
-                        .addComponent(btnWriteBill)
-                        .addGap(97, 97, 97)
-                        .addComponent(btnEditBill, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
+                        .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTitle)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(36, 36, 36)
-                                .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(40, 40, 40)
-                                .addComponent(btnSearch))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(50, Short.MAX_VALUE))
+                                .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnSearch)))))
+                .addContainerGap(44, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnWriteBill)
+                .addGap(143, 143, 143)
+                .addComponent(btnEditBill, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(231, 231, 231))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSearch)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
+                .addComponent(lblTitle)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEditBill)
-                    .addComponent(btnWriteBill))
-                .addContainerGap(37, Short.MAX_VALUE))
+                    .addComponent(btnBack)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSearch))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnWriteBill)
+                    .addComponent(btnEditBill))
+                .addGap(33, 33, 33))
         );
 
         pack();
@@ -220,19 +241,26 @@ public class BillManagementFrm extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnSearchActionPerformed
 
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        HomeFrm homeFrm = new HomeFrm(user);
+        homeFrm.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnBackActionPerformed
+
     /**
      * @param args the command line arguments
      */
   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
     private javax.swing.JButton btnEditBill;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnWriteBill;
     private javax.swing.JDialog createBillFrm;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JDialog searchClientFrm;
     private javax.swing.JTable tblBill;
     private javax.swing.JTextField txtSearchKey;

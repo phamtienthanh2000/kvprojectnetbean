@@ -3,17 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view;
+package view.productmanagement;
 
 import controller.ProductDAO;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Description;
 import model.Product;
 import model.User;
+import view.HomeFrm;
 
 /**
  *
@@ -25,8 +26,7 @@ public class ProductManagementFrm extends javax.swing.JFrame {
     private ProductDAO productDAO;
     private String[][] data;
     private ArrayList<Product> allProducts;
-    private ArrayList<Product> searchProducts;
-    private DefaultTableModel tblModel;
+
     private Product chosenProduct;
 
     /**
@@ -36,11 +36,13 @@ public class ProductManagementFrm extends javax.swing.JFrame {
         productDAO = new ProductDAO();
         this.user = u;
         initComponents();
-
+        lblTitle.setFont(new Font("Serif", Font.PLAIN, 20));
+        this.setLocationRelativeTo(null);
+        this.addDialog.setLocationRelativeTo(null);
+        this.editDialog.setLocationRelativeTo(null);
         allProducts = productDAO.getAllProduct();
-        updateTableProduct();
-        addDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        editDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        updateTableProduct(allProducts);
+
 
     }
 
@@ -91,6 +93,8 @@ public class ProductManagementFrm extends javax.swing.JFrame {
         tblProduct = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        lblTitle = new javax.swing.JLabel();
+        btnBack = new javax.swing.JButton();
 
         addDialog.setMinimumSize(new java.awt.Dimension(400, 400));
         addDialog.setModal(true);
@@ -122,28 +126,26 @@ public class ProductManagementFrm extends javax.swing.JFrame {
             addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(addDialogLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
+                .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblAddProduct4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAddProduct3, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAddProduct2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAddProduct1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAddProduct5, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                    .addComponent(lblAddProduct, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(25, 25, 25)
                 .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtOrigin, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtStickerPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCalculationUnit, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSupplyCompany, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(addDialogLayout.createSequentialGroup()
-                        .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblAddProduct4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblAddProduct3, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblAddProduct2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblAddProduct1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblAddProduct5, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(25, 25, 25)
-                        .addGroup(addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtOrigin, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtStickerPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCalculationUnit, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSupplyCompany, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(addDialogLayout.createSequentialGroup()
-                                .addGap(37, 37, 37)
-                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(67, Short.MAX_VALUE))
+                        .addGap(37, 37, 37)
+                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         addDialogLayout.setVerticalGroup(
             addDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -301,11 +303,11 @@ public class ProductManagementFrm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No .", "ID sản phẩm", "Tên sản phẩm", "Đơn vị tính", "Số lượng", "Giá niêm yết", "Nguồn gốc", "Công ty Sản Xuất"
+                "No .", "ID sản phẩm", "Tên sản phẩm", "Đơn vị tính", "Nguồn gốc", "Công ty sản xuất", "Tồn kho", "Giá niêm yết", "Tổng giá trị"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -333,48 +335,66 @@ public class ProductManagementFrm extends javax.swing.JFrame {
             }
         });
 
+        lblTitle.setText("Quản lý sản phẩm");
+
+        btnBack.setText("Quay lại");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(41, 41, 41)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(46, 46, 46)
-                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(39, 39, 39)
-                                .addComponent(btnAddNewProduct)
-                                .addGap(89, 89, 89)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(78, 78, 78)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 138, Short.MAX_VALUE)))
+                .addComponent(jScrollPane2)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(63, 63, 63)
+                .addComponent(btnAddNewProduct)
+                .addGap(152, 152, 152)
+                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 227, Short.MAX_VALUE)
+                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(106, 106, 106))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(224, 224, 224)
+                        .addComponent(lblTitle))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(145, 145, 145)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
+                        .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(43, 43, 43)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBack)
+                    .addComponent(lblTitle))
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtSearchKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddNewProduct)
                     .addComponent(btnEdit)
-                    .addComponent(btnDelete))
-                .addContainerGap(39, Short.MAX_VALUE))
+                    .addComponent(btnDelete)
+                    .addComponent(btnAddNewProduct))
+                .addGap(38, 38, 38))
         );
 
         pack();
@@ -382,28 +402,7 @@ public class ProductManagementFrm extends javax.swing.JFrame {
 
     private void btnAddNewProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddNewProductActionPerformed
         addDialog.setVisible(true);
-        Product product = new Product();
-        product.setProductName(txtProductName.getText());
-        product.setCalculationUnit(txtCalculationUnit.getText());
-        product.setAmount(Integer.parseInt(txtAmount.getText()));
-        product.setStickerPrice(Integer.parseInt(txtStickerPrice.getText()));
-
-        Description des = new Description();
-        des.setOrigin(txtOrigin.getText());
-        des.setSupplyCompany(txtSupplyCompany.getText());
-        product.setDescription(des);
-
-        if (productDAO.createProduct(product)) {
-            JOptionPane.showMessageDialog(null, "Thêm mới sản phẩm thành công");
-
-        } else {
-
-            JOptionPane.showMessageDialog(null, "Thêm mới sản phẩm thất bại");
-
-        }
-        HomeFrm frm = new HomeFrm(user);
-        frm.setVisible(true);
-        this.dispose();
+       
 
 
     }//GEN-LAST:event_btnAddNewProductActionPerformed
@@ -411,6 +410,8 @@ public class ProductManagementFrm extends javax.swing.JFrame {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         String productName = txtProductName.getText();
         String calculationUnit = txtCalculationUnit.getText();
+        String amount =txtAmount.getText();
+        String stickerPrice = txtStickerPrice.getText();
         String regexNumber = "^\\d{1,}$";
         if (productName.isBlank() || productName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra tên sản phẩm");
@@ -420,44 +421,58 @@ public class ProductManagementFrm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra đơn vị tính");
             return;
         }
-        if (!Pattern.matches(regexNumber, txtAmount.getText())) {
+        if (!Pattern.matches(regexNumber, amount)) {
             JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra số lượng");
             return;
         }
-        if (!Pattern.matches(regexNumber, txtStickerPrice.getText())) {
+        if (!Pattern.matches(regexNumber, stickerPrice)) {
             JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra giá niêm yết");
             return;
 
         }
-        addDialog.setVisible(false);
+        Product product = new Product();
+        product.setProductName(productName);
+        product.setCalculationUnit(calculationUnit);
+        product.setAmount(Integer.parseInt(amount));
+        product.setStickerPrice(Integer.parseInt(stickerPrice));
+
+        Description des = new Description();
+        des.setOrigin(txtOrigin.getText());
+        des.setSupplyCompany(txtSupplyCompany.getText());
+        product.setDescription(des);
+
+        if (productDAO.createProduct(product)) {
+            JOptionPane.showMessageDialog(null, "Thêm mới sản phẩm thành công");
+            allProducts.add(product);
+            updateTableProduct(allProducts);;
+        } else {
+            chosenProduct = null;
+
+            JOptionPane.showMessageDialog(null, "Thêm mới sản phẩm thất bại");
+
+        }
+        txtProductName.setText("");
+        txtCalculationUnit.setText("");
+        txtAmount.setText("");
+        txtStickerPrice.setText("");
+        txtOrigin.setText("");
+        txtSupplyCompany.setText("");
+        addDialog.dispose();
+       
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        System.out.println("In here");
+
         if (txtSearchKey.getText() == "") {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập tên sản phẩm !");
             return;
         }
-        this.searchProducts = productDAO.searchByProductName(txtSearchKey.getText());
-        data = new String[searchProducts.size()][8];
-        for (int i = 0; i < searchProducts.size(); i++) {
-            Product product = searchProducts.get(i);
-            data[i][0] = i + 1 + "";
-            data[i][1] = product.getId() + "";
-            data[i][2] = product.getProductName();
-            data[i][3] = product.getCalculationUnit();
-            data[i][4] = product.getAmount() + "";
-            data[i][5] = product.getStickerPrice() + "";
-            data[i][6] = product.getDescription().getOrigin();
-            data[i][7] = product.getDescription().getSupplyCompany();
-        }
-        tblModel = new DefaultTableModel(data, new String[]{"No .", "ID sản phẩm", "Tên sản phẩm", "Đơn vị tính", "Số lượng", "Giá niêm yết", "Nguồn gốc", "Công ty Sản Xuất"});
-        //tblModel = new DefaultTableModel(data,)
-        tblProduct.setModel(tblModel);
+        ArrayList<Product> searchProducts = productDAO.searchByProductName(txtSearchKey.getText());
+        updateTableProduct(searchProducts);
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void tblProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductMouseClicked
-         int column = tblProduct.getColumnModel().getColumnIndexAtX(evt.getX());
+        int column = tblProduct.getColumnModel().getColumnIndexAtX(evt.getX());
         int row = evt.getY() / tblProduct.getRowHeight();
         if (row < tblProduct.getRowCount() && row >= 0 && column < tblProduct.getColumnCount() && column >= 0) {
             for (Product c : this.allProducts) {
@@ -481,20 +496,7 @@ public class ProductManagementFrm extends javax.swing.JFrame {
         this.txtUpdateOrigin.setText(chosenProduct.getDescription().getOrigin());
         this.txtUpdateSupplyCompany.setText(chosenProduct.getDescription().getSupplyCompany());
         editDialog.setVisible(true);
-        chosenProduct.setProductName(txtUpdateName.getText());
-        chosenProduct.setCalculationUnit(txtUpdateCalculationUnit.getText());
-        chosenProduct.setAmount(Integer.parseInt(txtUpdateAmount.getText()));
-        chosenProduct.setStickerPrice(Integer.parseInt(txtUpdateStickerPrice.getText()));
-        chosenProduct.getDescription().setOrigin(txtUpdateOrigin.getText());
-        chosenProduct.getDescription().setSupplyCompany(txtUpdateSupplyCompany.getText());
-        if (productDAO.updateProduct(chosenProduct)) {
-            JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công !");
-
-        } else {
-            JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại !");
-            return;
-        }
-        updateTableProduct();
+       
 
 
     }//GEN-LAST:event_btnEditActionPerformed
@@ -503,16 +505,16 @@ public class ProductManagementFrm extends javax.swing.JFrame {
 
         String regexNumber = "^\\d{1,}$";
         String updateName = txtUpdateName.getText();
-        String updateCalUnit = txtCalculationUnit.getText();
+        String updateCalUnit = txtUpdateCalculationUnit.getText();
         String updateAmount = txtUpdateAmount.getText();
         String updateStickerPrice = txtUpdateStickerPrice.getText();
 
-        if (updateName == "") {
+        if (updateName.isBlank() || updateName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng cập nhật tên sản phẩm");
             return;
 
         }
-        if (updateCalUnit == "") {
+        if (updateCalUnit.isBlank() || updateCalUnit.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng cập nhật đơn vị tính");
             return;
         }
@@ -526,6 +528,41 @@ public class ProductManagementFrm extends javax.swing.JFrame {
             return;
 
         }
+        Product test = new Product();
+        test.setId(chosenProduct.getId());
+        test.setProductName(updateName);
+        test.setCalculationUnit(updateCalUnit);
+        test.setAmount(Integer.parseInt(updateAmount));
+        test.setStickerPrice(Integer.parseInt(updateStickerPrice));
+
+        Description testDes = new Description();
+        testDes.setId(chosenProduct.getDescription().getId());
+        testDes.setOrigin(txtUpdateOrigin.getText());
+        testDes.setSupplyCompany(txtUpdateSupplyCompany.getText());
+        test.setDescription(testDes);
+
+       
+        if (productDAO.updateProduct(test)) {
+            chosenProduct.setProductName(updateName);
+            chosenProduct.setCalculationUnit(updateCalUnit);
+            chosenProduct.setAmount(Integer.parseInt(updateAmount));
+            chosenProduct.setStickerPrice(Integer.parseInt(updateStickerPrice));
+            chosenProduct.getDescription().setOrigin(txtUpdateOrigin.getText());
+            chosenProduct.getDescription().setSupplyCompany(txtUpdateSupplyCompany.getText());
+            JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thành công !");
+            updateTableProduct(allProducts);
+        } else {
+            JOptionPane.showMessageDialog(null, "Cập nhật sản phẩm thất bại !");
+            return;
+        }
+        chosenProduct = null;
+        txtUpdateName.setText("");
+        txtUpdateCalculationUnit.setText("");
+        txtUpdateAmount.setText("");
+        txtUpdateStickerPrice.setText("");
+        txtUpdateOrigin.setText("");
+        txtUpdateSupplyCompany.setText("");
+
         editDialog.setVisible(false);
 
     }//GEN-LAST:event_btnSaveActionPerformed
@@ -549,16 +586,25 @@ public class ProductManagementFrm extends javax.swing.JFrame {
 
                 }
 
-                    updateTableProduct();
+                updateTableProduct(allProducts);
             } else {
                 JOptionPane.showMessageDialog(null, "Xóa sản phẩm thất bại !");
 
             }
+            chosenProduct = null;
 
         }
 
 
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        // TODO add your handling code here:
+        HomeFrm homeFrm = new HomeFrm(user);
+        homeFrm.setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_btnBackActionPerformed
 
     /**
      * @param args the command line arguments
@@ -568,6 +614,7 @@ public class ProductManagementFrm extends javax.swing.JFrame {
     private javax.swing.JDialog addDialog;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddNewProduct;
+    private javax.swing.JButton btnBack;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSave;
@@ -589,6 +636,7 @@ public class ProductManagementFrm extends javax.swing.JFrame {
     private javax.swing.JLabel lblAddProduct3;
     private javax.swing.JLabel lblAddProduct4;
     private javax.swing.JLabel lblAddProduct5;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JTable tblProduct;
     private javax.swing.JTextField txtAmount;
     private javax.swing.JTextField txtCalculationUnit;
@@ -605,25 +653,31 @@ public class ProductManagementFrm extends javax.swing.JFrame {
     private javax.swing.JTextField txtUpdateSupplyCompany;
     // End of variables declaration//GEN-END:variables
 
-    private void updateTableProduct(){
-        data = new String[allProducts.size()][8];
-                for (int i = 0; i < allProducts.size(); i++) {
-                    Product product = allProducts.get(i);
-                    data[i][0] = i + 1 + "";
-                    data[i][1] = product.getId() + "";
-                    data[i][2] = product.getProductName();
-                    data[i][3] = product.getCalculationUnit();
-                    data[i][4] = product.getAmount() + "";
-                    data[i][5] = product.getStickerPrice() + "";
-                    data[i][6] = product.getDescription().getOrigin();
-                    data[i][7] = product.getDescription().getSupplyCompany();
-                }
-                tblModel = new DefaultTableModel(data, new String[]{"No .", "ID sản phẩm", "Tên sản phẩm", "Đơn vị tính", "Số lượng", "Giá niêm yết", "Nguồn gốc", "Công ty Sản Xuất"});
-                //tblModel = new DefaultTableModel(data,)
-                tblProduct.setModel(tblModel);
-    
-    
-    
+    private void updateTableProduct(ArrayList<Product> products) {
+        String[][] data = new String[products.size() + 1][9];
+        int sum = 0;
+        for (int i = 0; i <= products.size(); i++) {
+            if (i == products.size()) {
+                data[i][0] = "Tổng giá trị";
+                data[i][tblProduct.getColumnCount() - 1] = sum+"";
+                break;
+            }
+            Product product = products.get(i);
+            data[i][0] = i + 1 + "";
+            data[i][1] = product.getId() + "";
+            data[i][2] = product.getProductName();
+            data[i][3] = product.getCalculationUnit();
+            data[i][4] = product.getDescription().getOrigin();
+            data[i][5] = product.getDescription().getSupplyCompany();
+            data[i][6] = product.getAmount() + "";
+            data[i][7] = product.getStickerPrice() + "";
+            data[i][8] = product.getAmount()*product.getStickerPrice()+"";
+            sum+=(product.getAmount()*product.getStickerPrice());
+        }
+        DefaultTableModel tblModel = new DefaultTableModel(data, new String[]{"No .", "ID sản phẩm", "Tên sản phẩm", "Đơn vị tính", "Nguồn gốc", "Công ty sản xuất", "Tồn kho", "Giá niêm yết", "Tổng giá trị"});
+        //tblModel = new DefaultTableModel(data,)
+        tblProduct.setModel(tblModel);
+
     }
 
 }

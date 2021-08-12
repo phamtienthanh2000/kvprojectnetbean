@@ -6,9 +6,9 @@
 package view;
 
 import controller.ClientDAO;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Client;
@@ -22,28 +22,24 @@ public class ClientManagementFrm extends javax.swing.JFrame {
 
     private User user;
     private Client chosenClient;
-    private ArrayList<Client> clients ;
-    private ArrayList<Client> clientList;
+    private ArrayList<Client> allClients;
+    private ArrayList<Client> clientSearchList;
+
     /**
      * Creates new form ClientManagementFrm
      */
     public ClientManagementFrm(User u) {
         this.user = u;
         initComponents();
-        ClientDAO clientDAO = new ClientDAO();
-         clients = clientDAO.getAllClients();
+        this.setLocationRelativeTo(null);
+        this.addClientDialog.setLocationRelativeTo(null);
+        this.editClientDialog.setLocationRelativeTo(null);
+        lblTitle.setFont(new Font("Serif", Font.PLAIN, 20));
 
-        String[][] data = new String[clients.size()][5];
-        for (int i = 0; i < clients.size(); i++) {
-            Client client = clients.get(i);
-            data[i][0] = i + 1 + "";
-            data[i][1] = client.getId() + "";
-            data[i][2] = client.getName();
-            data[i][3] = client.getPhoneNumber();
-            data[i][4] = client.getAddress();
-        }
-        DefaultTableModel defaultTableModel = new DefaultTableModel(data, new String[]{"No.", "Mã khách hàng", "Tên khách hàng", "Số điện thoại", "Địa chỉ"});
-        tblClient.setModel(defaultTableModel);
+        ClientDAO clientDAO = new ClientDAO();
+        allClients = clientDAO.getAllClients();
+
+        loadClientTableData(allClients);
 
     }
 
@@ -79,12 +75,13 @@ public class ClientManagementFrm extends javax.swing.JFrame {
         btnCreateClient = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblClient = new javax.swing.JTable();
-        jLabel5 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         btnSearch = new javax.swing.JButton();
         txtSearch = new javax.swing.JTextField();
+        btnBack = new javax.swing.JButton();
 
         addClientDialog.setMinimumSize(new java.awt.Dimension(400, 400));
         addClientDialog.setModal(true);
@@ -122,19 +119,20 @@ public class ClientManagementFrm extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addClientDialogLayout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(addClientDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(addClientDialogLayout.createSequentialGroup()
-                                        .addGap(19, 19, 19)
-                                        .addComponent(btnAdd)))))
+                                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(39, 39, 39))
                     .addGroup(addClientDialogLayout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addClientDialogLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
+                .addGroup(addClientDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addClientDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(50, 50, 50))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addClientDialogLayout.createSequentialGroup()
+                        .addComponent(btnAdd)
+                        .addGap(154, 154, 154))))
             .addGroup(addClientDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addClientDialogLayout.createSequentialGroup()
                     .addContainerGap(157, Short.MAX_VALUE)
@@ -156,9 +154,9 @@ public class ClientManagementFrm extends javax.swing.JFrame {
                 .addGroup(addClientDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                .addGap(41, 41, 41)
                 .addComponent(btnAdd)
-                .addGap(41, 41, 41))
+                .addContainerGap(52, Short.MAX_VALUE))
             .addGroup(addClientDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(addClientDialogLayout.createSequentialGroup()
                     .addGap(61, 61, 61)
@@ -176,7 +174,6 @@ public class ClientManagementFrm extends javax.swing.JFrame {
         jLabel9.setText("Địa chỉ");
 
         btnSaveUpdate.setText("Lưu");
-        btnSaveUpdate.setActionCommand("Lưu");
         btnSaveUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveUpdateActionPerformed(evt);
@@ -215,7 +212,7 @@ public class ClientManagementFrm extends javax.swing.JFrame {
                         .addComponent(jLabel11))
                     .addGroup(editClientDialogLayout.createSequentialGroup()
                         .addGap(164, 164, 164)
-                        .addComponent(btnSaveUpdate)))
+                        .addComponent(btnSaveUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         editClientDialogLayout.setVerticalGroup(
@@ -286,7 +283,7 @@ public class ClientManagementFrm extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tblClient);
 
-        jLabel5.setText("Quản lý khách hàng");
+        lblTitle.setText("Quản lý khách hàng");
 
         btnEdit.setText("Sửa ");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -311,74 +308,73 @@ public class ClientManagementFrm extends javax.swing.JFrame {
             }
         });
 
+        btnBack.setText("Quay lại");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(225, 225, 225))
             .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnCreateClient)
-                        .addGap(36, 36, 36)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44)
-                        .addComponent(btnDelete))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(33, 33, 33)
                         .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(40, Short.MAX_VALUE))
+                        .addGap(84, 84, 84)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(76, 76, 76)
+                        .addComponent(btnCreateClient)
+                        .addGap(74, 74, 74)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(86, 86, 86)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(97, 97, 97)
+                                .addComponent(lblTitle))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 587, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(20, 20, 20)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(btnSearch)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(33, 33, 33)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTitle)
+                    .addComponent(btnBack))
+                .addGap(21, 21, 21)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel6))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSearch))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCreateClient)
                     .addComponent(btnEdit)
                     .addComponent(btnDelete))
-                .addContainerGap())
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    // nut them cua main frame
     private void btnCreateClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateClientActionPerformed
         this.addClientDialog.setVisible(true);
-        Client client = new Client();
-        client.setName(txtClientName.getText());
-        client.setPhoneNumber(txtPhoneNumber.getText());
-        client.setAddress(txtAddress.getText());
-        ClientDAO clientDAO = new ClientDAO();
-        if (clientDAO.createClient(client)) {
-            JOptionPane.showMessageDialog(null, "Thêm khách hàng thành công! ");
-             
-            
-        } else {
-            JOptionPane.showMessageDialog(null, "Thêm khách hàng thất bại!");
-
-        };
-        HomeFrm homeFrm = new HomeFrm(user);
-        homeFrm.setVisible(true);
-        this.dispose();
-
+        loadClientTableData(allClients);
 
     }//GEN-LAST:event_btnCreateClientActionPerformed
 
@@ -387,7 +383,7 @@ public class ClientManagementFrm extends javax.swing.JFrame {
         String clientName = this.txtClientName.getText();
         String clientPhoneNumber = this.txtPhoneNumber.getText();
         String clientAddress = this.txtAddress.getText();
-        if (clientName.isBlank()||clientName.isEmpty()) {
+        if (clientName.isBlank() || clientName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập tên khách hàng hợp lệ");
             return;
 
@@ -400,7 +396,24 @@ public class ClientManagementFrm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập địa chỉ hợp lệ");
             return;
         }
+        Client client = new Client();
+        client.setName(txtClientName.getText());
+        client.setPhoneNumber(txtPhoneNumber.getText());
+        client.setAddress(txtAddress.getText());
+        ClientDAO clientDAO = new ClientDAO();
+        if (clientDAO.createClient(client)) {
+            JOptionPane.showMessageDialog(null, "Thêm khách hàng thành công! ");
+            allClients.add(client);
 
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Thêm khách hàng thất bại!");
+
+        };
+
+        //        HomeFrm homeFrm = new HomeFrm(user);
+         //      homeFrm.setVisible(true);
+        //    this.dispose();
         this.addClientDialog.setVisible(false);
 
 
@@ -413,10 +426,10 @@ public class ClientManagementFrm extends javax.swing.JFrame {
             return;
         }
         ClientDAO clientDAO = new ClientDAO();
-         clientList = clientDAO.searchClient(searchKey);
-        String[][] data = new String[clientList.size()][5];
-        for (int i = 0; i < clientList.size(); i++) {
-            Client client = clientList.get(i);
+        clientSearchList = clientDAO.searchClient(searchKey);
+        String[][] data = new String[clientSearchList.size()][5];
+        for (int i = 0; i < clientSearchList.size(); i++) {
+            Client client = clientSearchList.get(i);
             data[i][0] = i + 1 + "";
             data[i][1] = client.getId() + "";
             data[i][2] = client.getName();
@@ -433,101 +446,115 @@ public class ClientManagementFrm extends javax.swing.JFrame {
         int column = tblClient.getColumnModel().getColumnIndexAtX(evt.getX());
         int row = evt.getY() / tblClient.getRowHeight();
         if (row < tblClient.getRowCount() && row >= 0 && column < tblClient.getColumnCount() && column >= 0) {
-            for(Client c : this.clients){
-                if(c.getId()==Integer.parseInt(tblClient.getValueAt(row, 1).toString())){
+            for (Client c : this.allClients) {
+                if (c.getId() == Integer.parseInt(tblClient.getValueAt(row, 1).toString())) {
                     this.chosenClient = c;
                 };
-            
+
             }
         }
     }//GEN-LAST:event_tblClientMouseClicked
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        if(this.chosenClient == null){
-        JOptionPane.showMessageDialog(null, "Xin hãy chọn một khách hàng trong bảng !");
-        return;
+        if (this.chosenClient == null) {
+            JOptionPane.showMessageDialog(null, "Xin hãy chọn một khách hàng trong bảng !");
+            return;
         }
+
+        txtUpdateClientName.setText(chosenClient.getName());
+        txtUpdateClientAddress.setText(chosenClient.getAddress());
+        txtUpdateClientPhonenumber.setText(chosenClient.getPhoneNumber());
         this.editClientDialog.setVisible(true);
-        String clientUpdateName = this.txtUpdateClientName.getText();
-        String clientUpdateAddress = this.txtUpdateClientAddress.getText();
-        String clientUpdatePhoneNumber = this.txtUpdateClientPhonenumber.getText();
-        
-        chosenClient.setName(clientUpdateName);
-        chosenClient.setAddress(clientUpdateAddress);
-        chosenClient.setPhoneNumber(clientUpdatePhoneNumber);
-        ClientDAO clientDAO = new ClientDAO();
-        
-        if(clientDAO.editClient(chosenClient)){
-        JOptionPane.showMessageDialog(null , "Cập nhật khách hàng thành công !");
-        }
-        else {
-         JOptionPane.showMessageDialog(null, "Cập nhật khách hàng thất bại !");
-                
-                
-                }
-             
-                HomeFrm homeFrm = new HomeFrm(user);
-                homeFrm.setVisible(true);
+ 
 
-                this.dispose();
-
-        
-        
-        
-        
-        
-        
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSaveUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveUpdateActionPerformed
-       String updateName = this.txtUpdateClientName.getText();
-       String updateAddress= this.txtUpdateClientAddress.getText();
-       String updatePhoneNumber = this.txtUpdateClientPhonenumber.getText();
-        
-        if(updateName.isBlank()||updateName.isEmpty()){
+        String updateName = this.txtUpdateClientName.getText();
+        String updateAddress = this.txtUpdateClientAddress.getText();
+        String updatePhoneNumber = this.txtUpdateClientPhonenumber.getText();
+
+        if (updateName.isBlank() || updateName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền tên khách hàng");
-        return;
+            return;
         }
-        if(updateAddress.isBlank()||updateAddress.isEmpty()){
-                    JOptionPane.showMessageDialog(null, "Vui lòng điền địa chỉ");
-                    return;
-        
+        if (updateAddress.isBlank() || updateAddress.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng điền địa chỉ");
+            return;
+
         }
-        if(updatePhoneNumber.isBlank()||updatePhoneNumber.isEmpty()){
-        JOptionPane.showMessageDialog(null, "Vui lòng điền số điện thoại");
-        return;
-        
+        if (updatePhoneNumber.isBlank() || updatePhoneNumber.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng điền số điện thoại");
+            return;
+
         }
-        
+        Client test = new Client();
+        test.setId(chosenClient.getId());
+        test.setName(updateName);
+        test.setAddress(updateAddress);
+        test.setPhoneNumber(updatePhoneNumber);
+       
+        ClientDAO clientDAO = new ClientDAO();
+
+        if (clientDAO.editClient(test)) {
+            JOptionPane.showMessageDialog(null, "Cập nhật khách hàng thành công !");
+            chosenClient.setName(updateName);
+            chosenClient.setAddress(updateAddress);
+            chosenClient.setPhoneNumber(updatePhoneNumber);
+          loadClientTableData(allClients);
+
+
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Cập nhật khách hàng thất bại !");
+            txtUpdateClientName.setText(chosenClient.getName());
+            txtUpdateClientAddress.setText(chosenClient.getAddress());
+            txtUpdateClientPhonenumber.setText(chosenClient.getPhoneNumber());
+        }
+
+
+
         editClientDialog.setVisible(false);
-        
+
     }//GEN-LAST:event_btnSaveUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if(chosenClient==null){
-        JOptionPane.showMessageDialog(null, "Vui lòng chọn một khách hàng trong bảng !");
+        if (chosenClient == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một khách hàng trong bảng !");
             return;
+        } else {
+            int confirm = JOptionPane.showConfirmDialog(null, "Xác nhận xóa khách hàng : " + chosenClient.getName() + "?", "Xóa khách hàng", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                ClientDAO clientDAO = new ClientDAO();
+                if (clientDAO.deleteClient(chosenClient.getId())) {
+                    for( int i = 0 ; i < allClients.size() ; i++){
+                        Client client = allClients.get(i);
+                        if (client.getId()==chosenClient.getId()){
+                        allClients.remove(i);
+                            break;
+                        }
+
+
+                    }
+
+                    JOptionPane.showMessageDialog(null, "Xóa khách hàng thành công!");
+                    loadClientTableData(allClients);
+                } else {
+                    chosenClient = null;
+                    JOptionPane.showMessageDialog(null, "Xóa khách hàng thất bại!");
+                };
+            }
+
         }
-        else {
-        int confirm =   JOptionPane.showConfirmDialog(null, "Xác nhận xóa khách hàng : "+chosenClient.getName() +"?", "Xóa khách hàng",JOptionPane.YES_NO_OPTION);
-        if(confirm == JOptionPane.YES_OPTION){
-            ClientDAO clientDAO = new ClientDAO();
-           if( clientDAO.deleteClient(chosenClient.getId())){
-            JOptionPane.showMessageDialog(null, "Xóa khách hàng thành công!");
-            HomeFrm homeFrm = new HomeFrm(user);
-            homeFrm.setVisible(true);
-            this.dispose();
-           }else {
-                       JOptionPane.showMessageDialog(null, "Xóa khách hàng thất bại!");
-           };
-        }
-        
-        
-        
-        }
-        
-        
+
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        HomeFrm homeFrm = new HomeFrm(user);
+        homeFrm.setVisible(true);
+        addClientDialog.setLocationRelativeTo(this);
+        this.dispose();
+    }//GEN-LAST:event_btnBackActionPerformed
 
     /**
      * @param args the command line arguments
@@ -536,6 +563,7 @@ public class ClientManagementFrm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog addClientDialog;
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnBack;
     private javax.swing.JButton btnCreateClient;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
@@ -549,13 +577,12 @@ public class ClientManagementFrm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JTable tblClient;
     private javax.swing.JTextField txtAddress;
     private javax.swing.JTextField txtClientName;
@@ -565,4 +592,21 @@ public class ClientManagementFrm extends javax.swing.JFrame {
     private javax.swing.JTextField txtUpdateClientName;
     private javax.swing.JTextField txtUpdateClientPhonenumber;
     // End of variables declaration//GEN-END:variables
+
+    private void loadClientTableData(ArrayList<Client> clientList) {
+        String[][] data = new String[clientList.size()][5];
+        for (int i = 0; i < clientList.size(); i++) {
+            Client client = clientList.get(i);
+            data[i][0] = i + 1 + "";
+            data[i][1] = client.getId() + "";
+            data[i][2] = client.getName();
+            data[i][3] = client.getPhoneNumber();
+            data[i][4] = client.getAddress();
+        }
+        DefaultTableModel defaultTableModel = new DefaultTableModel(data, new String[]{"No.", "Mã khách hàng", "Tên khách hàng", "Số điện thoại", "Địa chỉ"});
+        tblClient.setModel(defaultTableModel);
+
+
+}
+
 }

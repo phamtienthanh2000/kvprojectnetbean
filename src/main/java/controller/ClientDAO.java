@@ -5,11 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import model.Client;
-import controller.DAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Client;
 
 public class ClientDAO extends DAO{
 	public ClientDAO() {
@@ -23,12 +21,12 @@ public class ClientDAO extends DAO{
 			ps.setString(2, client.getAddress());
 			ps.setString(3, client.getPhoneNumber());
 			int addSuccess =ps.executeUpdate();
-//			ResultSet rs =ps.getGeneratedKeys();
-//			if(rs.next()) {
-//				System.out.println(rs.getInt(1));
-//				
-//			}
-			return addSuccess > 0 ? true : false;
+                    ResultSet rs = ps.getGeneratedKeys();
+                    if (rs.next()) {
+                        client.setId(rs.getInt(1));
+
+                    }
+                    return addSuccess > 0;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

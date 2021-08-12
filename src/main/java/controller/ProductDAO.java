@@ -5,10 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import controller.DAO;
 import model.Description;
-
 import model.Product;
 
 public class ProductDAO extends DAO{
@@ -118,10 +115,10 @@ public boolean updateProduct(Product product) {
 		ps.setInt(5, product.getId());
 		int rowCount = ps.executeUpdate();
 		if(rowCount>0) {
-			ps = connection.prepareStatement("Update tblDescription set origin = ?,supplyCompany = ? Where idProduct = ?");
-			ps.setString(1, product.getDescription().getOrigin());
+                    ps = connection.prepareStatement("Update tblDescription set origin = ?,supplyCompany = ? Where id = ?");
+                    ps.setString(1, product.getDescription().getOrigin());
 			ps.setString(2, product.getDescription().getSupplyCompany());
-			ps.setInt(3, product.getId());
+                    ps.setInt(3, product.getDescription().getId());
 			rowCount = ps.executeUpdate();
 			return rowCount > 0;
 		}
